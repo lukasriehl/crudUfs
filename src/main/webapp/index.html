@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Cadastro de UFs</title>
+
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto|Varela+Round|Open+Sans">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="resources/css/estilo.css"/>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    </head>
+    <body ng-app="CrudUfApp">
+        <div class="container" ng-controller="UFsController as controller">
+            <div class="table-wrapper">
+                <div class="table-title">
+                    <div class="row">
+                        <div class="col-sm-8"><h2>Cadastro de UFs</h2></div>
+                        <div class="col-sm-4">
+                            <button id="bntNova" type="button" 
+                                    data-ng-click="controller.nova()"
+                                    data-ng-show="controller.ufs !== undefined &&
+                                                  controller.exibeBotaoNovo === true"
+                                    class="btn btn-info add-new"><i class="fa fa-plus"></i>
+                                Nova UF</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="divCadAtuUfs" ng-show="controller.uf">
+                    <div class="form-group">
+                        <label for="idUf" style="padding-left: 20px;">ID: </label>
+                        <input id="idUf" type="number" ng-model="controller.uf.id" disabled
+                               class="form-group">
+                    </div>
+
+                    <div class="form-group">
+                        <label id="lblSiglaUf" for="siglaUf">Sigla: </label>
+                        <input id="siglaUf" type="text" ng-model="controller.uf.sigla"
+                               required ng-minlength="2" ng-maxlength="2" maxlength="2"
+                               class="form-group">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="descricaoUf">Descrição: </label>
+                        <textarea id="descricaoUf" ng-model="controller.uf.descricao"
+                                  required ng-maxlength="500" maxlength="500"
+                                  rows="5" class="form-control"></textarea>
+                    </div>
+
+                    <div class="buttons">
+                        <button id="btnSalvar" type="button" data-ng-click="controller.salvar()" 
+                                class="btn btn-primary">Salvar</button>
+                        <button id="btnCancelar" type="button" data-ng-click="controller.cancelar()" 
+                                class="btn btn-primary">Cancelar</button>
+                    </div>
+                </div>
+
+                <div id="divListagemUfs">
+                    <table id="tbUfs" class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Sigla</th>
+                                <th>Descrição</th>
+                                <th>Data de Criação</th>
+                                <th>Data de Modificação</th>
+                                <th id="thAcoes">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr data-ng-show="controller.ufs === undefined || controller.ufs.length <= 0">
+                                <td colspan="6">Nenhuma UF cadastrada.</td>
+                            </tr>
+                            <tr data-ng-repeat="uf in controller.ufs track by uf.id">
+                                <td>{{uf.id}}</td>
+                                <td>{{uf.sigla}}</td>
+                                <td>{{uf.descricao}}</td>
+                                <td>{{uf.dataCriacaoFormatada}}</td>
+                                <td>{{uf.dataModificacaoFormatada}}</td>
+                                <td id="tdAcoes">
+                                    <a class="edit" title="Alterar" data-ng-click="controller.alterar(uf)" 
+                                       data-toggle="tooltip"><i class="material-icons">&#xE254;</i></a>
+                                    <a class="delete" title="Excluir" data-ng-click="controller.excluir(uf)"
+                                       data-toggle="tooltip"><i class="material-icons">&#xE872;</i></a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <script src="resources/script/angular.js"></script>
+        <script src="resources/script/uf.js"></script>
+    </body>
+</html>

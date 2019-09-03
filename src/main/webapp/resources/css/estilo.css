@@ -1,0 +1,40 @@
+/* 
+    Created on : 02/09/2019, 00:12:55
+    Author     : lukas
+*/
+body {
+    color: #404E67;
+    background: #F5F7FA;
+    font-family: 'Open Sans', sans-serif;
+}
+
+button#bntNova{
+    float: right; 
+    margin-top: 15px;
+}
+
+label#lblSiglaUf{
+    margin-left: 2px;
+}
+
+input#siglaUf{
+    text-transform: uppercase;
+}
+
+input#descricaoUf{
+    text-transform: capitalize;
+}
+
+div#divListagemUfs{
+    margin-top: 30px;
+}
+
+th#thAcoes{
+    text-align: center;
+}
+
+td#tdAcoes{
+    width: 70px;
+}
+
+
