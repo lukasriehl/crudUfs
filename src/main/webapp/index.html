@@ -15,85 +15,102 @@
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     </head>
     <body ng-app="CrudUfApp">
-        <div class="container" ng-controller="UFsController as controller">
-            <div class="table-wrapper">
-                <div class="table-title">
-                    <div class="row">
-                        <div class="col-sm-8"><h2>Cadastro de UFs</h2></div>
-                        <div class="col-sm-4">
-                            <button id="bntNova" type="button" 
-                                    data-ng-click="controller.nova()"
-                                    data-ng-show="controller.ufs !== undefined &&
-                                                  controller.exibeBotaoNovo === true"
-                                    class="btn btn-info add-new"><i class="fa fa-plus"></i>
-                                Nova UF</button>
+        <form name="crudUfForm" novalidate ng-model-options="{ allowInvalid: true}">
+            <div class="container" ng-controller="UFsController as controller">
+                <div class="table-wrapper">
+                    <div class="table-title">
+                        <div class="row">
+                            <div class="col-sm-8"><h2>Cadastro de UFs</h2></div>
                         </div>
                     </div>
-                </div>
 
-                <div id="divCadAtuUfs" ng-show="controller.uf">
-                    <div class="form-group">
-                        <label for="idUf" style="padding-left: 20px;">ID: </label>
-                        <input id="idUf" type="number" ng-model="controller.uf.id" disabled
-                               class="form-group">
+                    <div id="divCadAtuUfs">
+                        <div class="form-group">
+                            <label id="lblId" for="txtId" style="padding-left: 20px;">ID: </label>
+                            <input id="txtId" type="number" ng-model="controller.uf.id" disabled
+                                   class="form-group">
+                        </div>
+
+                        <div class="form-group" 
+                             ng-class="{'has-error' : 
+                                         crudUfForm.sigla.$invalid && !crudUfForm.sigla.$pristine}">
+                            <label id="lblSigla" for="txtSigla">Sigla: </label>
+                            <input id="txtSigla"
+                                   type="text" 
+                                   name="sigla"
+                                   ng-model="controller.uf.sigla"
+                                   ng-minlength="2" 
+                                   ng-maxlength="2" 
+                                   maxlength="2"
+                                   required 
+                                   class="form-group">
+                            <p ng-show="crudUfForm.sigla.$invalid && !crudUfForm.sigla.$pristine" 
+                               class="help-block">Sigla é requerida.</p>
+                            <p ng-show="crudUfForm.sigla.$error.minlength
+                                                    || crudUfForm.sigla.$error.maxlength" 
+                               class="help-block">Sigla deve conter exatamente 2 caracteres.</p>
+                        </div>
+
+                        <div class="form-group"
+                             ng-class="{'has-error' : 
+                                         crudUfForm.descricao.$invalid && !crudUfForm.descricao.$pristine}">
+                            <label id="lblDescricao" for="txtDescricao">Descrição: </label>
+                            <textarea id="txtDescricao"
+                                      name="descricao"
+                                      ng-model="controller.uf.descricao"
+                                      ng-maxlength="500" 
+                                      rows="5"
+                                      maxlength="500"
+                                      required
+                                      class="form-control"></textarea>
+                            <p ng-show="crudUfForm.descricao.$invalid && !crudUfForm.descricao.$pristine" 
+                               class="help-block">Descrição é requerida.</p>
+                        </div>
+
+                        <div class="buttons">
+                            <button id="btnSalvar" type="button" data-ng-click="controller.salvar()" 
+                                    class="btn btn-primary"
+                                    ng-disabled="crudUfForm.$invalid">Salvar</button>
+                            <button id="btnLimpar" type="button" data-ng-click="controller.limpar()" 
+                                    class="btn btn-primary">Limpar</button>
+                        </div>
                     </div>
 
-                    <div class="form-group">
-                        <label id="lblSiglaUf" for="siglaUf">Sigla: </label>
-                        <input id="siglaUf" type="text" ng-model="controller.uf.sigla"
-                               required ng-minlength="2" ng-maxlength="2" maxlength="2"
-                               class="form-group">
+                    <div id="divListagemUfs">
+                        <table id="tbUfs" class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Sigla</th>
+                                    <th>Descrição</th>
+                                    <th>Data de Criação</th>
+                                    <th>Data de Modificação</th>
+                                    <th id="thAcoes">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr data-ng-show="controller.ufs === undefined || controller.ufs.length <= 0">
+                                    <td colspan="6">Nenhuma UF cadastrada.</td>
+                                </tr>
+                                <tr data-ng-repeat="uf in controller.ufs track by uf.id">
+                                    <td>{{uf.id}}</td>
+                                    <td>{{uf.sigla}}</td>
+                                    <td>{{uf.descricao}}</td>
+                                    <td>{{uf.dataCriacao | cmdate}}</td>
+                                    <td>{{uf.dataModificacao | cmdate}}</td>
+                                    <td id="tdAcoes">
+                                        <a class="edit" title="Alterar" data-ng-click="controller.alterar(uf)" 
+                                           data-toggle="tooltip"><i class="material-icons">&#xE254;</i></a>
+                                        <a class="delete" title="Excluir" data-ng-click="controller.excluir(uf)"
+                                           data-toggle="tooltip"><i class="material-icons">&#xE872;</i></a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
-
-                    <div class="form-group">
-                        <label for="descricaoUf">Descrição: </label>
-                        <textarea id="descricaoUf" ng-model="controller.uf.descricao"
-                                  required ng-maxlength="500" maxlength="500"
-                                  rows="5" class="form-control"></textarea>
-                    </div>
-
-                    <div class="buttons">
-                        <button id="btnSalvar" type="button" data-ng-click="controller.salvar()" 
-                                class="btn btn-primary">Salvar</button>
-                        <button id="btnCancelar" type="button" data-ng-click="controller.cancelar()" 
-                                class="btn btn-primary">Cancelar</button>
-                    </div>
-                </div>
-
-                <div id="divListagemUfs">
-                    <table id="tbUfs" class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Sigla</th>
-                                <th>Descrição</th>
-                                <th>Data de Criação</th>
-                                <th>Data de Modificação</th>
-                                <th id="thAcoes">Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr data-ng-show="controller.ufs === undefined || controller.ufs.length <= 0">
-                                <td colspan="6">Nenhuma UF cadastrada.</td>
-                            </tr>
-                            <tr data-ng-repeat="uf in controller.ufs track by uf.id">
-                                <td>{{uf.id}}</td>
-                                <td>{{uf.sigla}}</td>
-                                <td>{{uf.descricao}}</td>
-                                <td>{{uf.dataCriacaoFormatada}}</td>
-                                <td>{{uf.dataModificacaoFormatada}}</td>
-                                <td id="tdAcoes">
-                                    <a class="edit" title="Alterar" data-ng-click="controller.alterar(uf)" 
-                                       data-toggle="tooltip"><i class="material-icons">&#xE254;</i></a>
-                                    <a class="delete" title="Excluir" data-ng-click="controller.excluir(uf)"
-                                       data-toggle="tooltip"><i class="material-icons">&#xE872;</i></a>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
                 </div>
             </div>
-        </div>
+        </form>
 
         <script src="resources/script/angular.js"></script>
         <script src="resources/script/uf.js"></script>

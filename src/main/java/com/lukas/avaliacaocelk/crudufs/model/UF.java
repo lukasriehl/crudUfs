@@ -1,5 +1,9 @@
 package com.lukas.avaliacaocelk.crudufs.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -34,10 +38,15 @@ public class UF implements Serializable {
     @Size(max = 500)
     private String descricao;
 
+    @NotNull
     @Column(name = "data_criacao", columnDefinition = "DATETIME", nullable = false, updatable = false)
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime dataCriacao;
 
-    @Column(name = "data_modificacao", columnDefinition = "DATETIME", nullable = false)
+    @Column(name = "data_modificacao", columnDefinition = "DATETIME")
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime dataModificacao;
 
     public UF() {
@@ -72,32 +81,12 @@ public class UF implements Serializable {
         return dataCriacao;
     }
 
-    public String getDataCriacaoFormatada() {
-        if (this.dataCriacao == null) {
-            return null;
-        } else {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
-
-            return this.dataCriacao.format(formatter);
-        }
-    }
-
     public void setDataCriacao(LocalDateTime dataCriacao) {
         this.dataCriacao = dataCriacao;
     }
 
     public LocalDateTime getDataModificacao() {
         return dataModificacao;
-    }
-
-    public String getDataModificacaoFormatada() {
-        if (this.dataModificacao == null) {
-            return null;
-        } else {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
-
-            return this.dataModificacao.format(formatter);
-        }
     }
 
     public void setDataModificacao(LocalDateTime dataModificacao) {

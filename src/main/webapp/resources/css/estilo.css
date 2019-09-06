@@ -13,15 +13,15 @@ button#bntNova{
     margin-top: 15px;
 }
 
-label#lblSiglaUf{
+label#lblSigla{
     margin-left: 2px;
 }
 
-input#siglaUf{
+input#txtSigla{
     text-transform: uppercase;
 }
 
-input#descricaoUf{
+input#txtDescricao{
     text-transform: capitalize;
 }
 

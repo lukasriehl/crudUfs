@@ -15,6 +15,8 @@ public class UfBO {
                 || uf.getDescricao() == null || uf.getDescricao().isEmpty()) {
             throw new Exception("Os campos Sigla e Descrição são obrigatórios!");
         }
+        
+        uf.setSigla(uf.getSigla().toUpperCase());
 
         UfDAO ufDAO = new UfDAO();
 
@@ -26,6 +28,8 @@ public class UfBO {
                 || uf.getDescricao() == null || uf.getDescricao().isEmpty()) {
             throw new Exception("Os campos Sigla e Descrição são obrigatórios!");
         }
+        
+        uf.setSigla(uf.getSigla().toUpperCase());
 
         UfDAO ufDAO = new UfDAO();
 

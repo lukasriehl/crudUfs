@@ -1,5 +1,5 @@
 //Controller
-angular.module("CrudUfApp", [])
+var CrudUfApp = angular.module("CrudUfApp", [])
         .value('urlBase', 'http://localhost:8080/crudUFs/rest/')
         .service('UfService', function ($http, urlBase) {
             this.listarUfs = function () {
@@ -32,55 +32,53 @@ angular.module("CrudUfApp", [])
                 });
             };
         })
-        .controller("UFsController", function (UfService) {
+        .controller("UFsController", function ($scope, UfService) {
             var self = this;
-
-            self.usuario = 'Lukas';
 
             self.ufs = [];
             self.uf = undefined;
-            
-            self.exibeBotaoNovo = true;
 
             self.nova = function () {
                 self.uf = {};
-                self.exibeBotaoNovo = false;
             };
 
             self.salvar = function () {
                 var msgErro = undefined;
+                var msgSucesso = undefined;
                 var salvar = undefined;
 
                 if (self.uf.id) {
                     salvar = UfService.atualizar(self.uf);
                     msgErro = 'Ocorreu um erro ao atualizar a UF!';
+                    msgSucesso = 'UF atualizada com sucesso!';
                 } else {
                     salvar = UfService.criar(self.uf);
                     msgErro = 'Ocorreu um erro ao salvar a UF!';
+                    msgSucesso = 'UF cadastrada com sucesso!';
                 }
 
                 salvar.then(function successCallback(response) {
-                    self.listarUfs();
-                    self.exibeBotaoNovo = true;
+                    self.exibeMensagem(msgSucesso);
+                    self.atualizaForm();
                 }, function errorCallback(response) {
-                    self.exibeMensagemErro(msgErro);
+                    self.exibeMensagem(msgErro);
                 });
             };
-            
-            self.cancelar = function () {
-                self.uf = undefined;
-                self.exibeBotaoNovo = true;
+
+            self.limpar = function () {
+                self.atualizaForm();
             };
 
             self.alterar = function (uf) {
-                this.uf = uf;
+                self.uf = uf;
             };
 
             self.excluir = function (uf) {
                 UfService.excluir(uf.id).then(function successCallback(response) {
-                    self.listarUfs();
+                    self.exibeMensagem("UF excluida com sucesso!");
+                    self.atualizaForm();
                 }, function errorCallback(response) {
-                    self.exibeMensagemErro("Ocorreu um erro ao excluir a UF!");
+                    self.exibeMensagem("Ocorreu um erro ao excluir a UF!");
                 });
             };
 
@@ -90,13 +88,38 @@ angular.module("CrudUfApp", [])
                             self.ufs = response.data;
                             self.uf = undefined;
                         }, function errorCallback(response) {
-                            self.exibeMensagemErro("Ocorreu um erro ao exibir a listagem de UFs!");
+                            self.exibeMensagem("Ocorreu um erro ao exibir a listagem de UFs!");
                         });
             };
 
-            self.exibeMensagemErro = function (msgErro) {
-                alert(msgErro);
+            self.exibeMensagem = function (msg) {
+                alert(msg);
+            };
+
+            self.resetaValoresForm = function () {
+                $scope.crudUfForm.$setPristine();
+                $scope.crudUfForm.$setUntouched();
+
+                self.uf = {};
+            };
+
+            self.atualizaForm = function () {
+                self.listarUfs();
+                self.resetaValoresForm();
             };
 
             self.listarUfs();
         });
+
+CrudUfApp.filter('cmdate', ['$filter', function ($filter) {
+        return function (input) {
+            if(input === undefined || input === null || input === ''){
+                return '';
+            }
+
+            var dataConvertida = new Date(input[0], input[1] - 1, input[2],
+                    input[3], input[4], input[5]);
+
+            return $filter('date')(dataConvertida, 'dd/MM/yyyy HH:mm:ss');
+        };
+    }]);

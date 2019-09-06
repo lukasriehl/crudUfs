@@ -15,7 +15,6 @@ public class UfDAO {
 
     public Long incluiUf(UF uf) throws Exception {
         uf.setDataCriacao(LocalDateTime.now());
-        uf.setDataModificacao(LocalDateTime.now());
 
         Session s = HibernateUtil.getSessionFactory().openSession();
 
