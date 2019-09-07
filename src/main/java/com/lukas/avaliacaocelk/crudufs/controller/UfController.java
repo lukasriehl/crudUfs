@@ -1,6 +1,8 @@
 package com.lukas.avaliacaocelk.crudufs.controller;
 
 import com.lukas.avaliacaocelk.crudufs.bo.UfBO;
+import com.lukas.avaliacaocelk.crudufs.exception.BDException;
+import com.lukas.avaliacaocelk.crudufs.exception.PreenchimentoCamposException;
 import com.lukas.avaliacaocelk.crudufs.model.UF;
 import java.util.List;
 import java.util.logging.Level;
@@ -24,15 +26,19 @@ import javax.ws.rs.core.Response;
 @Path("ufs")
 public class UfController {
 
+    private UfBO ufBO;
+
+    public UfController() {
+        this.ufBO = new UfBO();
+    }
+
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/")
     public List<UF> listaUFs() {
         try {
-            UfBO ufBO = new UfBO();
-
-            return ufBO.listaUfs();
-        } catch (Exception ex) {
+            return this.ufBO.listaUfs();
+        } catch (BDException ex) {
             Logger.getLogger(UfController.class.getName()).log(Level.SEVERE, null, ex);
             throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
         }
@@ -43,10 +49,8 @@ public class UfController {
     @Path("{id}/")
     public UF getUF(@PathParam("id") Long id) {
         try {
-            UfBO ufBO = new UfBO();
-
-            return ufBO.selecionaUfPorId(id);
-        } catch (Exception ex) {
+            return this.ufBO.selecionaUfPorId(id);
+        } catch (BDException | PreenchimentoCamposException ex) {
             Logger.getLogger(UfController.class.getName()).log(Level.SEVERE, null, ex);
             throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
         }
@@ -57,12 +61,10 @@ public class UfController {
     @Path("/")
     public Response criaUF(UF uf) {
         try {
-            UfBO ufBO = new UfBO();
-
-            ufBO.incluiUf(uf);
+            this.ufBO.incluiUf(uf);
 
             return Response.status(Response.Status.OK).build();
-        } catch (Exception ex) {
+        } catch (BDException | PreenchimentoCamposException ex) {
             Logger.getLogger(UfController.class.getName()).log(Level.SEVERE, null, ex);
             throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
         }
@@ -73,14 +75,12 @@ public class UfController {
     @Path("{id}/")
     public Response atualizaUF(UF uf, @PathParam("id") Long id) {
         try {
-            UfBO ufBO = new UfBO();
-            
             uf.setId(id);
 
-            ufBO.alteraUf(uf);
+            this.ufBO.alteraUf(uf);
 
             return Response.status(Response.Status.OK).build();
-        } catch (Exception ex) {
+        } catch (BDException | PreenchimentoCamposException ex) {
             Logger.getLogger(UfController.class.getName()).log(Level.SEVERE, null, ex);
             throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
         }
@@ -90,12 +90,10 @@ public class UfController {
     @Path("{id}/")
     public Response deletaUF(@PathParam("id") Long id) {
         try {
-            UfBO ufBO = new UfBO();
-
-            ufBO.excluiUf(id);
+            this.ufBO.excluiUf(id);
 
             return Response.status(Response.Status.OK).build();
-        } catch (Exception ex) {
+        } catch (BDException | PreenchimentoCamposException ex) {
             Logger.getLogger(UfController.class.getName()).log(Level.SEVERE, null, ex);
             throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
         }

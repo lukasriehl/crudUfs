@@ -1,6 +1,8 @@
 package com.lukas.avaliacaocelk.crudufs.bo;
 
 import com.lukas.avaliacaocelk.crudufs.dao.UfDAO;
+import com.lukas.avaliacaocelk.crudufs.exception.BDException;
+import com.lukas.avaliacaocelk.crudufs.exception.PreenchimentoCamposException;
 import com.lukas.avaliacaocelk.crudufs.model.UF;
 import java.util.List;
 
@@ -10,56 +12,58 @@ import java.util.List;
  */
 public class UfBO {
 
-    public Long incluiUf(UF uf) throws Exception {
+    private UfDAO ufDAO;
+
+    public UfBO() {
+        this.ufDAO = new UfDAO();
+    }
+
+    public Long incluiUf(UF uf) throws PreenchimentoCamposException, BDException {
         if (uf.getSigla() == null || uf.getSigla().isEmpty()
                 || uf.getDescricao() == null || uf.getDescricao().isEmpty()) {
-            throw new Exception("Os campos Sigla e Descrição são obrigatórios!");
+            throw new PreenchimentoCamposException("Os campos Sigla e Descrição são obrigatórios!");
         }
-        
+
         uf.setSigla(uf.getSigla().toUpperCase());
 
-        UfDAO ufDAO = new UfDAO();
-
-        return ufDAO.incluiUf(uf);
+        return this.ufDAO.incluiUf(uf);
     }
 
-    public void alteraUf(UF uf) throws Exception {
+    public void alteraUf(UF uf) throws PreenchimentoCamposException, BDException {
         if (uf.getSigla() == null || uf.getSigla().isEmpty()
                 || uf.getDescricao() == null || uf.getDescricao().isEmpty()) {
-            throw new Exception("Os campos Sigla e Descrição são obrigatórios!");
+            throw new PreenchimentoCamposException("Os campos Sigla e Descrição são obrigatórios!");
         }
-        
+
         uf.setSigla(uf.getSigla().toUpperCase());
 
-        UfDAO ufDAO = new UfDAO();
-
-        ufDAO.alteraUf(uf);
+        this.ufDAO.alteraUf(uf);
     }
 
-    public void excluiUf(Long id) throws Exception {
+    public void excluiUf(Long id) throws PreenchimentoCamposException, BDException {
         if (id == null) {
-            throw new Exception("É necessário informar o ID para a exclusão!");
+            throw new PreenchimentoCamposException("É necessário informar o ID para a exclusão!");
         }
 
-        UfDAO ufDAO = new UfDAO();
+        UF ufExclusao = selecionaUfPorId(id);
 
-        ufDAO.excluiUf(id);
-    }
-
-    public List<UF> listaUfs() {
-        UfDAO ufDAO = new UfDAO();
-
-        return ufDAO.listaUFs();
-    }
-
-    public UF selecionaUfPorId(Long id) throws Exception {
-        if (id == null) {
-            throw new Exception("É necessário informar o ID para buscar a UF!");
+        if (ufExclusao == null) {
+            throw new PreenchimentoCamposException("UF de ID " + id + " não encontrada para Exclusão!");
         }
 
-        UfDAO ufDAO = new UfDAO();
+        this.ufDAO.excluiUf(ufExclusao.getId());
+    }
 
-        return ufDAO.selecionaUfPorId(id);
+    public List<UF> listaUfs() throws BDException {
+        return this.ufDAO.listaUFs();
+    }
+
+    public UF selecionaUfPorId(Long id) throws PreenchimentoCamposException, BDException {
+        if (id == null) {
+            throw new PreenchimentoCamposException("É necessário informar o ID para buscar a UF!");
+        }
+
+        return this.ufDAO.selecionaUfPorId(id);
     }
 
 }
